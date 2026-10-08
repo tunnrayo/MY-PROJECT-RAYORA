@@ -21,7 +21,28 @@ const ORDER_COLS = `o.id, o.order_number AS "orderNumber", o.user_id AS "userId"
   o.status, o.payment_status AS "paymentStatus", o.payment_reference AS "paymentReference",
   o.is_demo AS "isDemo", o.created_at AS "createdAt"`;
 
-type OrderRow = { id: string; [key: string]: unknown };
+type OrderRow = {
+  id: string;
+  orderNumber: string;
+  userId: string;
+  customerName: string;
+  email: string;
+  phone: string;
+  address: string;
+  city: string;
+  state: string;
+  country: string;
+  subtotalKobo: number;
+  deliveryFeeKobo: number;
+  discountKobo: number;
+  totalKobo: number;
+  status: string;
+  paymentStatus: string;
+  paymentReference: string | null;
+  isDemo: boolean;
+  createdAt: string;
+  items?: unknown[];
+};
 
 async function withItems(orders: OrderRow[]) {
   if (orders.length === 0) return [];
