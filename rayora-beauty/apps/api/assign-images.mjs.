@@ -1,9 +1,4 @@
-import pg from "pg";
-
-const pool = new pg.Pool({
-connectionString: process.env.DATABASE_URL,
-ssl: { rejectUnauthorized: false }
-});
+import { pool } from "./pool.js";
 
 async function main() {
 const result = await pool.query(`     UPDATE products p
@@ -23,9 +18,12 @@ const result = await pool.query(`     UPDATE products p
       AND p.image_url IS NULL
   `);
 
-console.log(`Updated ${result.rowCount} products.`);
+console.log(`Updated ${result.rowCount} products with image URLs.`);
 }
 
 main()
-.catch(error => console.error(error.message))
+.catch((error) => {
+console.error("Image update failed:", error.message);
+process.exitCode = 1;
+})
 .finally(() => pool.end());
