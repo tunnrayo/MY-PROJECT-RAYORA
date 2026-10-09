@@ -1,0 +1,31 @@
+import pg from "pg";
+
+const pool = new pg.Pool({
+connectionString: process.env.DATABASE_URL,
+ssl: { rejectUnauthorized: false }
+});
+
+async function main() {
+const result = await pool.query(`     UPDATE products p
+    SET image_url = CASE
+      WHEN c.name ILIKE '%fragrance%' THEN
+        'https://images.unsplash.com/photo-1594035910387-fea47794261f?auto=format&fit=crop&w=800&q=85'
+      WHEN c.name ILIKE '%makeup%' THEN
+        'https://images.unsplash.com/photo-1586495777744-4413f21062fa?auto=format&fit=crop&w=800&q=85'
+      WHEN c.name ILIKE '%body%' OR c.name ILIKE '%skin%' THEN
+        'https://images.unsplash.com/photo-1608248543803-ba4f8c70ae0b?auto=format&fit=crop&w=800&q=85'
+      ELSE
+        'https://images.unsplash.com/photo-1601049541289-9b1b7bbbfe19?auto=format&fit=crop&w=800&q=85'
+    END,
+    updated_at = NOW()
+    FROM categories c
+    WHERE c.id = p.category_id
+      AND p.image_url IS NULL
+  `);
+
+console.log(`Updated ${result.rowCount} products.`);
+}
+
+main()
+.catch(error => console.error(error.message))
+.finally(() => pool.end());
