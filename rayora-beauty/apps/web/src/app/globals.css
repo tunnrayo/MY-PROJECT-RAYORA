@@ -5,9 +5,16 @@
 @layer base {
   html {
     scroll-behavior: smooth;
+    overflow-x: clip;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    html {
+      scroll-behavior: auto;
+    }
   }
   body {
     @apply bg-cream font-sans text-charcoal antialiased;
+    overflow-x: clip;
   }
   h1, h2, h3, h4 {
     @apply font-serif text-charcoal;
@@ -19,9 +26,29 @@
 
 @layer components {
   .btn-primary {
-    @apply inline-flex min-h-11 items-center justify-center rounded-full bg-charcoal px-6 text-sm font-medium text-ivory transition hover:bg-cocoa;
+    @apply inline-flex min-h-11 items-center justify-center rounded-full bg-charcoal px-6 text-sm font-medium uppercase tracking-wider text-ivory transition duration-300 hover:-translate-y-0.5 hover:bg-cocoa;
   }
   .btn-secondary {
-    @apply inline-flex min-h-11 items-center justify-center rounded-full border border-charcoal px-6 text-sm font-medium text-charcoal transition hover:bg-blush;
+    @apply inline-flex min-h-11 items-center justify-center rounded-full border border-charcoal px-6 text-sm font-medium uppercase tracking-wider text-charcoal transition duration-300 hover:-translate-y-0.5 hover:bg-blush;
   }
+}
+
+/* Gentle entrance animations. Only active when the visitor has not asked for reduced motion. */
+@media (prefers-reduced-motion: no-preference) {
+  .anim-fade-up {
+    opacity: 0;
+    transform: translateY(18px);
+    animation: rbFadeUp 0.8s cubic-bezier(0.2, 0.7, 0.2, 1) forwards;
+  }
+  .anim-reveal {
+    opacity: 0;
+    transform: scale(1.04);
+    animation: rbReveal 1.1s ease-out forwards;
+  }
+  .delay-1 { animation-delay: 0.12s; }
+  .delay-2 { animation-delay: 0.26s; }
+  .delay-3 { animation-delay: 0.4s; }
+  .delay-4 { animation-delay: 0.55s; }
+  @keyframes rbFadeUp { to { opacity: 1; transform: none; } }
+  @keyframes rbReveal { to { opacity: 1; transform: none; } }
 }

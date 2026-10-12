@@ -1,10 +1,12 @@
 import Link from "next/link";
+import { addToCartAction } from "@/actions/cart";
 import type { Product } from "@/lib/api";
 import { formatKobo } from "@/lib/format";
 import ProductImage from "./ProductImage";
 import Rating from "./Rating";
+import SubmitButton from "./SubmitButton";
 
-export default function ProductCard({ product }: { product: Product }) {
+export default function ProductCard({ product, quickAdd = false }: { product: Product; quickAdd?: boolean }) {
   const soldOut = product.stock <= 0;
   const lowStock = !soldOut && product.stock <= 10;
   const discount =
@@ -25,7 +27,7 @@ export default function ProductCard({ product }: { product: Product }) {
   return (
     <article className="group">
       <Link href={`/product/${product.slug}`} className="block">
-        <div className="relative">
+        <div className="relative overflow-hidden rounded-2xl [&_img]:transition-transform [&_img]:duration-700 group-hover:[&_img]:scale-105">
           <ProductImage name={product.name} category={product.categoryName} imageUrl={product.imageUrl} />
           {badge && (
             <span className="absolute left-3 top-3 rounded-full bg-ivory px-3 py-1 text-xs font-medium text-charcoal">
@@ -52,6 +54,17 @@ export default function ProductCard({ product }: { product: Product }) {
         )}
       </p>
       {lowStock && <p className="mt-0.5 text-xs text-rose-dark">Only {product.stock} left</p>}
+
+      {quickAdd && !soldOut && (
+        <form action={addToCartAction} className="mt-3">
+          <input type="hidden" name="productId" value={product.id} />
+          <input type="hidden" name="slug" value={product.slug} />
+          <input type="hidden" name="quantity" value="1" />
+          <SubmitButton className="btn-secondary w-full text-xs" pendingText="Adding...">
+            Add to cart
+          </SubmitButton>
+        </form>
+      )}
     </article>
   );
 }
